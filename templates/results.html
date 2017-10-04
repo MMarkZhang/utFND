@@ -45,9 +45,18 @@
     	<tr>
     		<td>{{ sources[i] }} </td> 
         <td>
-            <div class="progress">
-                <div class="progress-bar" role="progressbar" style="width:{{rep[i]}}%"> </div>
+            <a data-placement="bottom" data-toggle="popover" data-title="Change" data-container="body" type="button" data-html="true" href="javascript://" >
+              <div class="progress">  
+              <div class="progress-bar" role="progressbar" style="width:{{rep[i]}}%"> </div>
+              </div> 
+            </a>
+
+            <div id="popover-content" class="hide">
+              <div id="slidecontainer">
+              <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
+              </div>
             </div>
+            
         </td>
 
     		<td> {{ headlines[i] }} </td>
@@ -109,6 +118,17 @@
 $(document).ready(function(){
     $('[data-toggle="popover"]').popover();   
 });
+
+
+$("[data-toggle=popover]").popover({
+    html: true, 
+  content: function() {
+          return $('#popover-content').html();
+        }
+});
+
+
+
 </script>
 
 </body>
