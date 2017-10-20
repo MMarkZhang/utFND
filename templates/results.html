@@ -12,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
   <script src="https://use.fontawesome.com/6f35c618a4.js"></script>
   <script type="text/javascript"></script>
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/base/jquery-ui.css">
 </head>
 <body>
     
@@ -45,17 +46,17 @@
     	<tr>
     		<td>{{ sources[i] }} </td> 
         <td>
-            <a data-placement="bottom" data-toggle="popover" data-title="Change" data-container="body" type="button" data-html="true" href="javascript://" >
-              <div class="progress">  
-              <div class="progress-bar" role="progressbar" style="width:{{rep[i]}}%"> </div>
-              </div> 
-            </a>
+            
+              
+            <input type="range" min="1" max="100" value="{{rep[i]}}" class="slider" id="sliderep{{i}}">
+            
+              
+            
 
-            <div id="popover-content" class="hide">
-              <div id="slidecontainer">
-              <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-              </div>
-            </div>
+            
+
+
+            
             
         </td>
 
@@ -108,25 +109,95 @@
 
 </div>
 
+<p>Value: <span id="demo"></span></p>
+
+
+
 <footer>
   <p>This tool is a research prototype and is provided without warranty.</p>
 </footer>
 
 
 
+
+
 <script>
+
 $(document).ready(function(){
     $('[data-toggle="popover"]').popover();   
 });
 
+/*
 
-$("[data-toggle=popover]").popover({
-    html: true, 
-  content: function() {
-          return $('#popover-content').html();
-        }
+$(document).ready(function(){
+    $('#tglr').popover({
+      html : true, 
+      content: function() {
+        return $('#customdiv').html();
+      } 
+  });  
 });
 
+
+
+
+
+
+for (var j = 0; j < 2; j++) {
+    console.log(j)
+    $(document).ready(function(){
+        $("#repbar" + j).popover({
+          html: true, 
+          content: function() {
+            return $("#customdiv").html();
+          }
+        });   
+    });   
+}
+*/
+
+
+
+
+var stances = {{stances}}
+var rep = {{rep}}
+var n = {{n}};
+var output = document.getElementById("demo");
+
+
+function eval_vera(){
+  score = 0
+  for (i = 0; i < n; i++){
+    
+
+  }
+
+  
+}
+
+
+slider = new Array(n);
+
+
+
+
+for (i = 0; i < n; i++) {
+    slider[i] = document.getElementById("sliderep" + i);
+    slider[i].oninput = function() {
+        output.innerHTML = this.value;
+    }
+
+}
+
+
+
+
+
+
+
+//clf_vera_coef = {{clf_vera_coef}};
+//clf_vera_intc = {{clf_vera_intc}};
+//document.getElementById("demo").innerHTML = $('#popover-content').html();
 
 
 </script>

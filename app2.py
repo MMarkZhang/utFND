@@ -220,9 +220,12 @@ def answer(claim, res_g, for_api = False):
     vera = clf_vera.predict_proba(claim_f)
     rep = get_rep(dic_s, sources, clf_vera)
     
+    clf_vera_coef = clf_vera.coef_
+    clf_vera_intc = clf_vera.intercept_
+    
     if for_api:
         stances_p = clf_stance.predict_proba(xt)
-        return (sources, df, vera, stances_p, rep)
+        return (sources, df, vera, stances_p, rep, clf_vera_coef, clf_vera_intc)
 
     return (sources, df, vera)
     

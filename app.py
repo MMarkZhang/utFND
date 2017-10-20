@@ -61,7 +61,8 @@ def results():
     n = len(sources)
 
     return render_template("results.html", headlines=headlines, sources=sources, n=n,\
-        veracity=veracity, stances=stances, claim=claim, rep=rep)
+        veracity=veracity, stances=stances, claim=claim, rep=rep, \
+        clf_vera_coef=res["clf_vera_coef"].tolist())
 
 
 @app.route('/survey/')

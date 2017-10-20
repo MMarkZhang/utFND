@@ -9,7 +9,7 @@ import json
 
 def api_call(claim):
     res_g = app2.query_g(claim)
-    (sources, df, vera, stances, rep) = app2.answer(claim, res_g, True)
+    (sources, df, vera, stances, rep, clf_vera_coef, clf_vera_intc) = app2.answer(claim, res_g, True)
     articles = []
     n = len(sources)
     for i in range(n):
@@ -18,7 +18,9 @@ def api_call(claim):
 
     res = {"claim": claim,\
             "articles": articles, \
-            "veracity": vera[0].tolist()
+            "veracity": vera[0].tolist(), \
+            "clf_vera_coef": clf_vera_coef, \
+            "clf_vera_intc": clf_vera_intc, \
     }
     return res
     #return json.dumps(res)
