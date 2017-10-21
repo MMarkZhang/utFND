@@ -199,8 +199,21 @@ def get_rep(dic_s, sources, clf):
         sid = dic_s[so] - 1 # 1-index to 0-index
         rep = sum(abs(clf.coef_[:, sid]))
         rep = 1 if rep > 1 else rep
+        rep = 0.01 if rep < 0.01 else rep
         res.append(rep)
     return res
+
+def get_coef(dic_s, sources, clf):
+    res = []
+    for so in sources:
+        if so not in dic_s: 
+            res.append(0)
+            continue
+        sid = dic_s[so] - 1 # 1-index to 0-index
+        coef = clf.coef_[:, sid]
+        res.append(coef.tolist())
+    return res
+
 
 
 def answer(claim, res_g, for_api = False):
@@ -220,7 +233,7 @@ def answer(claim, res_g, for_api = False):
     vera = clf_vera.predict_proba(claim_f)
     rep = get_rep(dic_s, sources, clf_vera)
     
-    clf_vera_coef = clf_vera.coef_
+    clf_vera_coef = get_coef(dic_s, sources, clf_vera)
     clf_vera_intc = clf_vera.intercept_
     
     if for_api:

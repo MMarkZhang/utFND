@@ -62,7 +62,7 @@ def results():
 
     return render_template("results.html", headlines=headlines, sources=sources, n=n,\
         veracity=veracity, stances=stances, claim=claim, rep=rep, \
-        clf_vera_coef=res["clf_vera_coef"].tolist())
+        clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist())
 
 
 @app.route('/survey/')

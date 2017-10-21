@@ -13,6 +13,19 @@
   <script src="https://use.fontawesome.com/6f35c618a4.js"></script>
   <script type="text/javascript"></script>
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/base/jquery-ui.css">
+
+<style>
+  .affix {
+      top: 0;
+      width: 50%;
+  }
+
+  .affix + .container-fluid {
+      padding-top: 70px;
+  }
+  </style>
+
+
 </head>
 <body>
     
@@ -30,6 +43,22 @@
   <h2 style="position: relative; color: #BF5700; text-align: center; margin-top: 50px; ">Relevant Articles <a href="#" title="Relevant Articles" data-toggle="popover" data-trigger="focus hover" data-content="We put the claim into Google to find these articles"><i class="glyphicon glyphicon-question-sign"></i></a> </h2>
 
   
+
+  <div data-spy="affix" data-offset-top="197">
+    <h2 style="position: relative; color: #BF5700; text-align: center; margin-top: 50px; "> Predicted Correctness <a href="#" title="Predicted Correctness" data-toggle="popover"  data-trigger="focus hover" data-content="Based on the above articles (with their stances and source reputation), we predict the correctness of the claim"><i class="glyphicon glyphicon-question-sign"></i></a> </h2>
+    <br>
+    <div class="progress">
+        <div id = "vera_false" class="progress-bar progress-bar-danger" role="progressbar" style="width:0%">
+            False
+        </div>
+        <div id = "vera_unk" class="progress-bar progress-bar-warning" role="progressbar" style="width:0%">
+            Unknown
+        </div>
+        <div id = "vera_true" class="progress-bar progress-bar-success" role="progressbar" style="width:0%">
+            True
+        </div>
+    </div>
+</div>
 
   
   <table class="table">
@@ -80,22 +109,7 @@
     </tbody>
   </table>
 
-<br>
-<br>
 
-<h2 style="position: relative; color: #BF5700; text-align: center; margin-top: 50px; "> Predicted Correctness <a href="#" title="Predicted Correctness" data-toggle="popover"  data-trigger="focus hover" data-content="Based on the above articles (with their stances and source reputation), we predict the correctness of the claim"><i class="glyphicon glyphicon-question-sign"></i></a> </h2>
-<br>
-<div class="progress">
-    <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{{veracity[0]}}%">
-        False
-    </div>
-    <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{veracity[1]}}%">
-        Unknown
-    </div>
-    <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{veracity[2]}}%">
-        True
-    </div>
-</div>
 <br>
 <br>
 
@@ -161,21 +175,39 @@ for (var j = 0; j < 2; j++) {
 
 var stances = {{stances}}
 var rep = {{rep}}
+//var cur_rep = {{rep}}
 var n = {{n}};
 var output = document.getElementById("demo");
 
+var clf_vera_coef = {{clf_vera_coef}};
+var clf_vera_intc = {{clf_vera_intc}};
+
+var score_against, score_neutral, score_for;
+
 
 function eval_vera(){
-  score = 0
+  
+  score_against = 0;
+  score_neutral = 0;
+  score_for = 0;
   for (i = 0; i < n; i++){
-    
-
+    score_against += rep[i] * stances[i][0];
+    score_neutral += rep[i] * stances[i][1];
+    score_for     += rep[i] * stances[i][2];
   }
 
-  
+  s = score_for + score_neutral + score_against;
+  score_against = 100 * score_against / s;
+  score_neutral = 100 * score_neutral / s;
+  score_for     = 100 * score_for / s;
+  console.log(score_against, score_neutral, score_for);
+  document.getElementById("vera_false").style = "width:" + score_against + "%";
+  document.getElementById("vera_unk").style = "width:" + score_neutral + "%";
+  document.getElementById("vera_true").style = "width:" + score_for + "%";
+
 }
 
-
+eval_vera();
 slider = new Array(n);
 
 
@@ -183,8 +215,13 @@ slider = new Array(n);
 
 for (i = 0; i < n; i++) {
     slider[i] = document.getElementById("sliderep" + i);
+    slider[i].i = i
     slider[i].oninput = function() {
         output.innerHTML = this.value;
+        rep[this.i] = this.value;
+        eval_vera();
+
+
     }
 
 }
@@ -195,9 +232,6 @@ for (i = 0; i < n; i++) {
 
 
 
-//clf_vera_coef = {{clf_vera_coef}};
-//clf_vera_intc = {{clf_vera_intc}};
-//document.getElementById("demo").innerHTML = $('#popover-content').html();
 
 
 </script>
