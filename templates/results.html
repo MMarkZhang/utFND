@@ -14,6 +14,16 @@
   <script type="text/javascript"></script>
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/themes/base/jquery-ui.css">
 
+  <script type="text/javascript" src="{{ url_for('static', filename='jquery.tablesorter.min.js') }}"></script>
+  <script>
+  $(document).ready(function(){
+    $(function(){
+      $("#mytable").tablesorter();
+            });
+          });
+  </script>
+
+
 <style>
   .affix {
       top: 0;
@@ -61,13 +71,13 @@
 </div>
 
   
-  <table class="table">
+  <table class="table" id="mytable">
     <thead>
       <tr>
         <th class="col-md-1" style="color: #BF5700">Source <a href="#" title="Source" data-toggle="popover" data-trigger="focus hover" data-content="The website that publishes the article"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
-        <th class="col-md-1" style="color: #BF5700">Predicted Reputation <a href="#" title="Predicted Reputation" data-toggle="popover" data-trigger="focus hover" data-content="We predict how often articles published by a source is reliable"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
+        <th class="col-md-1" style="color: #BF5700">Predicted Reputation <a href="#" title="Predicted Reputation" data-toggle="popover" data-trigger="focus hover" data-content="We predict how often articles published by a source is reliable (click to sort)"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
         <th class="col-md-3" style="color: #BF5700">Headline</th>
-        <th class="col-md-1" style="color: #BF5700">Predicted Stance <a href="#" title="Predicted Stance" data-toggle="popover" data-trigger="focus hover" data-content="We predict whether an article is for, against or neutral with respect to the claim"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
+        <th class="col-md-1 "  style="color: #BF5700">Predicted Stance <a href="#" title="Predicted Stance" data-toggle="popover" data-trigger="focus hover" data-content="We predict whether an article is for, against or neutral with respect to the claim (click to sort by for)"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
       </tr>
     </thead>
     <tbody>
@@ -76,7 +86,7 @@
     		<td>{{ sources[i] }} </td> 
         <td>
             
-              
+            <div style="display:none;" id="textrep{{i}}">{{rep[i]}}</div>  
             <input type="range" min="1" max="100" value="{{rep[i]}}" class="slider" id="sliderep{{i}}">
             
               
@@ -91,6 +101,8 @@
 
     		<td> {{ headlines[i] }} </td>
             <td> 
+            	<div style="display:none;" id="textstance{{i}}">{{stances[i][2]}}</div>  
+
                 <div class="progress">
                     <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{{stances[i][0]}}%">
                         Against
@@ -184,6 +196,19 @@ var clf_vera_intc = {{clf_vera_intc}};
 
 var score_against, score_neutral, score_for;
 
+function pad(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length-size);
+}
+
+// fix stance sort order
+for (i = 0; i < n; i++) {
+	ts = document.getElementById("textstance" + i);
+	ts.innerHTML = pad(parseInt(ts.innerHTML), 5);
+}
+
+
+
 
 function eval_vera(){
   
@@ -209,23 +234,26 @@ function eval_vera(){
 
 eval_vera();
 slider = new Array(n);
-
+textreps = new Array(n);
 
 
 
 for (i = 0; i < n; i++) {
     slider[i] = document.getElementById("sliderep" + i);
     slider[i].i = i
+    textreps[i] = document.getElementById("textrep" + i)
+    //textreps[i].i = i
     slider[i].oninput = function() {
         output.innerHTML = this.value;
         rep[this.i] = this.value;
+        textreps[this.i].innerHTML = this.value
         eval_vera();
+        $("#mytable").trigger("update");
 
 
     }
 
 }
-
 
 
 
