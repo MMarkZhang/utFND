@@ -28,7 +28,7 @@ logger.setLevel(logging.INFO)
 app = Flask(__name__)
 
 # Define a route for the default URL, which loads the form
-@app.route('/') # First page 
+@app.route('/') # First page
 def form():
     return render_template('form_submit.html')
 
@@ -38,13 +38,13 @@ def userClaimsInput():
     print ("Query string is")
     print QS
     print request.form["button"]
-    
+
     if request.form["button"] == "Try a Random Claim":
         list_claims = pickle.load(open('list_claim.pkl'))
         QS = random.choice(list_claims)
     return render_template('form_action.html', QueryString=QS)
 
-# Second Page code down below 
+# Second Page code down below
 #Error needs to be fixed using OOP
 
 
@@ -65,6 +65,11 @@ def results():
         clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist())
 
 
+@app.route('/source_page/')
+def source_page():
+    s = request.args['source']
+    return render_template("source_page.html", source = s)
+
 @app.route('/survey/')
 def survey():
     return render_template("survey.html")
@@ -78,12 +83,12 @@ def finish():
     useful = request.args.get('useful')
     easy = request.args.get('easy')
     comment = request.args.get('comment')
-    
+
     log = "[SURVEY] useful=" + useful + ";easy=" + easy + ";comment=" + comment
-    
+
     print log
     logger.info(log)
-    
+
     return render_template("finish.html")
 
 
@@ -95,7 +100,7 @@ def userClaimsOpinion():
     uncertainPercentage=request.form['unsureInput']
     total = int(truePercentage) + int(falsePercentage) + int(uncertainPercentage)
     if total != 100:
-     return render_template('form_action.html', ErrorMessage=EM)   
+     return render_template('form_action.html', ErrorMessage=EM)
     else:
         return render_template('form_action.html')
 
@@ -106,9 +111,9 @@ def userClaimsOpinion():
     # if sum >100 or sum<100:
     #     return render_template (userClaimsInput page , errormessage="The numbers should add up to 100")
 
-    #In string QS, replace every string with a + and then pass it as a parameter to the API (An) 
+    #In string QS, replace every string with a + and then pass it as a parameter to the API (An)
     # QSNEW= "http://www.cs.utexas.edu/~atn/cgi-bin/api.cgi?claim="+ourstring
-    
-    
+
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=80)
