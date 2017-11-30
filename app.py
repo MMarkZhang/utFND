@@ -68,7 +68,24 @@ def results():
 @app.route('/source_page/')
 def source_page():
     s = request.args['source']
-    return render_template("source_page.html", source = s)
+    n = 6 #This will hange to reflect how many articles we have for this source
+
+    """At the moment, I am creating placeholder lists below.
+    The plan is to populate these lists with the actual information.
+    """
+    claims = []
+    articles = []
+    pred_stances = []
+    pred_claim_veracities = []
+
+    for i in range(n):
+        claims.append("Claim "+str(i)+" here")
+        articles.append("Article "+str(i)+" here")
+        pred_stances.append("Prediced Stance "+str(i)+" here")
+        pred_claim_veracities.append("Predicted Claim Veracity "+str(i)+" here")
+
+    return render_template("source_page.html", num_rows = n, source = s, claims = claims, \
+            articles = articles, pred_stances = pred_stances, pred_claim_veracities = pred_claim_veracities)
 
 @app.route('/survey/')
 def survey():

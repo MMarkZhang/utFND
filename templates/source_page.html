@@ -70,20 +70,20 @@
         </tr>
       </thead>
       <tbody>
-        <!--TODO: currently doing only 10 rows. Need to do as many rows as there are articles -->
-        {% for i  in range(0,10) %}
+        {% for i  in range(0,num_rows) %} <!--num_rows is passed from app.py -->
         <tr>
           <td>
-            Claim {{i}} goes here
+            {{claims[i]}}
           </td>
           <td>
-            Article {{i}} goes here
+            {{articles[i]}}
           </td>
           <td>
-            Predicted Stance {{i}} goes here
+            <!-- This should be a slider, similar to the source reputation slider on the results page -->
+            {{pred_stances[i]}}
           </td>
           <td>
-            Predicted Claim Veracity {{i}} goes here
+            {{pred_claim_veracities[i]}}
           </td>
         </tr>
         {% endfor %}
