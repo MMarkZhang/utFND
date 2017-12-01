@@ -41,11 +41,11 @@ nltk.download('hmm_treebank_pos_tagger')
 def query_er(claim):
     er = EventRegistry(apiKey = api_key)
     q = QueryArticlesIter(conceptUri = er.getConceptUri(claim))
-    
+
     res = []
     for art in q.execQuery(er, sortBy = "date"):
         res.append(art)
-        
+
     return res
 
 
@@ -71,7 +71,7 @@ from googleapiclient.discovery import build
 
 
 def get_title(url):
-    
+
     try:
         page = urllib2.urlopen(url)
         t = lxml.html.parse(page)
@@ -85,37 +85,37 @@ def get_source(url):
 
 def web_search(claim):
     url = 'https://www.google.com/search?'
-    
+
     final_url = url + urllib.urlencode({'q': claim})
-    
+
     raw = get(final_url).text
     page = fromstring(raw)
 
     res = []
-    
+
     for result in page.cssselect(".r a"):
         url = result.get("href")
         if url.startswith("/url?"):
             url = parse_qs(urlparse(url).query)['q']
         res.append(url[0])
-        
+
     return res
-    
+
 def web_search_title(claim):
     links = web_search(claim)
     titles = [get_title(l) for l in links]
     sources = [get_source(l) for l in links]
-    
+
     return (links, titles, sources)
 
 
 
-def query_g(claim):
+def query_g(claim, use_cache=False):
     """
     get search results (from google)
     """
     list_claim = pickle.load(open('list_claim.pkl'))
-    if claim in list_claim:
+    if use_cache and claim in list_claim:
         # claim in the dataset, load it
         data_all = pd.read_csv('edata_all.csv')
         rel_data = data_all[ data_all.claimHeadline == claim]
@@ -144,22 +144,24 @@ def query_g(claim):
 def process_g(g, claim):
     sources = []
     headlines= []
-    
+    urls = []
+
     for i in g['items']:
         source = i['displayLink']
         headline = i['title']
         #res.append((source, headline))
         sources.append(source)
         headlines.append(headline)
-    
+        urls.append(str(i['link']))
+
     n = len(sources)
-    
+
     df = pd.DataFrame({ 'claimHeadline': [claim] * n, \
                         'articleHeadline': headlines, \
                         'claimId': [0] * n, \
                         'articleId': range(n) } )
-    
-    return (sources, df)
+
+    return (sources, df, urls)
 
 import features
 
@@ -176,7 +178,7 @@ def get_features_ch(claim, headline):
                         'articleHeadline': [headline], \
                         'claimId': [0], \
                         'articleId': [0] } )
-    
+
     xt = features.p.pipeline.transform(df)
     return xt
 
@@ -186,14 +188,14 @@ def get_claim_f(dic_s, sources, stances, l = 724):
         if so not in dic_s: continue
         sid = dic_s[so] - 1 # 1-index to 0-index
         f[0, sid] = st - 1 # 0, 1, 2 to -1, 0, 1
-        
+
     return f
 
 
 def get_rep(dic_s, sources, clf):
     res = []
     for so in sources:
-        if so not in dic_s: 
+        if so not in dic_s:
             res.append(0)
             continue
         sid = dic_s[so] - 1 # 1-index to 0-index
@@ -206,7 +208,7 @@ def get_rep(dic_s, sources, clf):
 def get_coef(dic_s, sources, clf):
     res = []
     for so in sources:
-        if so not in dic_s: 
+        if so not in dic_s:
             res.append(0)
             continue
         sid = dic_s[so] - 1 # 1-index to 0-index
@@ -222,55 +224,51 @@ def answer(claim, res_g, for_api = False):
     """
     #(cmv, dic_s) = pickle.load(open('save_cmv_dics.pkl'))
     (clf_vera, clf_stance, dic_s) = pickle.load(open('save_clf_dics.pkl'))
-    
-    
-    (sources, df) = process_g(res_g, claim)
+
+
+    (sources, df, urls) = process_g(res_g, claim)
     xt = get_features(df)
-    
+
     stances = clf_stance.predict(xt)
     claim_f = get_claim_f(dic_s, sources, stances)
-    
+
     vera = clf_vera.predict_proba(claim_f)
     rep = get_rep(dic_s, sources, clf_vera)
-    
+
     clf_vera_coef = get_coef(dic_s, sources, clf_vera)
     clf_vera_intc = clf_vera.intercept_
-    
+
     if for_api:
         stances_p = clf_stance.predict_proba(xt)
-        return (sources, df, vera, stances_p, rep, clf_vera_coef, clf_vera_intc)
+        return (sources, df, vera, stances_p, rep, clf_vera_coef, clf_vera_intc, urls)
 
     return (sources, df, vera)
-    
-    
+
+
 def gen_res_str(sources, df, vera):
     headlines = df.articleHeadline
-    
+
     res = ""
     for s, h in zip(sources, headlines):
         res = res + s + ': ' + h + '<br>'
-    
+
     pf = int(vera[0][0]* 100)
     pu = int(vera[0][1]* 100)
     pt = int(vera[0][2]* 100)
     res = res + 'Predict veracity: ' + str(pf) + '% False, ' + \
                                     str(pu) + '% Unknown, ' +  \
                                     str(pt) + '% True, '
-    
+
     return res
-    
-    
+
+
 def web_search2(claim):
     url = 'https://www.google.com/search?'
-    
+
     final_url = url + urllib.urlencode({'q': claim})
-    
+
     response = requests.get(final_url)
-    
+
     html = response.text
-    
+
     return html
-
-
-
-

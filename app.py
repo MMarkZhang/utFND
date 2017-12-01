@@ -48,9 +48,18 @@ def userClaimsInput():
 #Error needs to be fixed using OOP
 
 
-@app.route('/results/')
+@app.route('/results/', methods=['GET', 'POST'])
 def results():
-    claim = request.args['claim']
+    #claim = request.args['claim']
+    claim=request.form['claim']
+    print ("Query string is")
+    print claim
+    print request.form["button"]
+
+    if request.form["button"] == "Try a Random Claim":
+        list_claims = pickle.load(open('list_claim.pkl'))
+        claim = random.choice(list_claims)
+
     res = server.api_call(claim)
     #res_str = json.dumps(res, indent=4, sort_keys=True)
     headlines = [a['headlines'] for a in res['articles']]
@@ -58,11 +67,12 @@ def results():
     stances = [ [s*100 for s in a['stance'] ] for a in res['articles']]
     veracity = [v*100 for v in res['veracity']]
     rep   = [100*a['reputation'] for a  in res['articles']]
+    urls   = [u for u  in res['urls']]
     n = len(sources)
 
     return render_template("results.html", headlines=headlines, sources=sources, n=n,\
         veracity=veracity, stances=stances, claim=claim, rep=rep, \
-        clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist())
+        clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls)
 
 
 @app.route('/source_page/')
