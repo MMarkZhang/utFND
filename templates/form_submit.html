@@ -1,13 +1,13 @@
 <html>
 <head>
-    <title>News Fact Checker</title>
+    <title>Claim Checker</title>
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
     <script src="https://use.fontawesome.com/6f35c618a4.js"></script>
     <script type="text/javascript"></script>
 </head>
 <body>
-  <h1>News Fact Checker</h1>
+  <h1>Claim Checker</h1>
   <h2>A Research Prototype</h2>
   <header>
   <nav>
@@ -16,7 +16,7 @@
   </nav>
   </header>
       <p style="text-align:center;">Enter a Claim</p>
-      <form method="post" action="{{ url_for('userClaimsInput') }}">
+      <form method="post" action="{{ url_for('results') }}">
         <input type="text" class="searchbox" name='claim' id='claim'>
 	<br>
 	<div class="buttons">

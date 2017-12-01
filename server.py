@@ -9,7 +9,7 @@ import json
 
 def api_call(claim):
     res_g = app2.query_g(claim)
-    (sources, df, vera, stances, rep, clf_vera_coef, clf_vera_intc) = app2.answer(claim, res_g, True)
+    (sources, df, vera, stances, rep, clf_vera_coef, clf_vera_intc, urls) = app2.answer(claim, res_g, True)
     articles = []
     n = len(sources)
     for i in range(n):
@@ -21,6 +21,7 @@ def api_call(claim):
             "veracity": vera[0].tolist(), \
             "clf_vera_coef": clf_vera_coef, \
             "clf_vera_intc": clf_vera_intc, \
+            "urls": urls
     }
     return res
     #return json.dumps(res)
@@ -45,7 +46,7 @@ def answer(data):
         print 'got res_g'
         #res_g = temp_res_g
         (sources, df, vera) = app2.answer(claim, res_g)
-        
+
         print 'got (s, df, vera)'
         #save to db
         headlines = df.articleHeadline.values.tolist()

@@ -1,6 +1,6 @@
 html {
   position: relative;
-  min-height: 100%;  
+  min-height: 100%;
 }
 body {
   font-family: "Open Sans", sans-serif;
@@ -48,7 +48,7 @@ footer p {
   margin-right: auto;
   text-align: center;
   font-weight: medium;
-} 
+}
 nav a:link, nav a:active, nav a:visited {
   color: white;
   font-size: 24px;
@@ -100,6 +100,10 @@ ul {
   margin-right: auto;
   max-width: 80%;
   margin-top: 50px;
+}
+.navbar-inverse {
+  background-color: #ffffff;
+  border-color: #000000;
 }
 a {
     color: #BF5700;
