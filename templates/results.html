@@ -85,13 +85,14 @@ TODO:
         <th class="col-md-1" style="color: #BF5700">Predicted Reputation <a href="#" title="Predicted Reputation" data-toggle="popover" data-trigger="focus hover" data-content="We predict how often articles published by a source is reliable (click to sort)"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
         <th class="col-md-1" style="color: #BF5700">Change reputation</th>
         <th class="col-md-3" style="color: #BF5700">Headline</th>
+        <th class="col-md-1" style="color: #BF5700">Iframe</th>
         <th class="col-md-1" style="color: #BF5700">Predicted Stance <a href="#" title="Predicted Stance" data-toggle="popover" data-trigger="focus hover" data-content="We predict whether an article is for, against or neutral with respect to the claim (click to sort by for)"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
       </tr>
     </thead>
     <tbody>
       	{% for i  in range(0,n) %}
 
-    	<tr class="accordion-toggle" data-toggle="collapse" data-target="#accordion" class="clickable">
+    	<tr>
     		<td>
           <a href="/source_page/?source={{sources[i]}}">{{ sources[i] }}</a>
         </td>
@@ -100,20 +101,13 @@ TODO:
             <div style="display:none;" id="textrep{{i}}">{{rep[i]}}</div>
             <input type="range" min="1" max="100" value="{{rep[i]}}" class="slider" id="sliderep{{i}}">
 
-
-
-
-
-
-
-
-
         </td>
         <td>
           <button type="button" id="sourcerep{{i}}" class="btn">Revert to default rep</button>
         </td>
-    		<td>  <a href={{urls[i]}}> {{ headlines[i] }} </a> </td>
-            <td>
+    		<td>  <a href={{urls[i]}}> {{ headlines[i] }} </a>    </td>
+        <td class="accordion-toggle" data-toggle="collapse" data-target="#accordion{{i}}" class="clickable" >  open    </td>
+        <td>
                 <div style="display:none;" id="textstance{{i}}">{{stances[i][2]}}</div>
                 <div class="progress">
                     <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{{stances[i][0]}}%">
@@ -127,13 +121,12 @@ TODO:
                     </div>
                 </div>
 
-            </td>
+        </td>
     	</tr>
        <tr>
-        <td colspan="5">
-        <div id="accordion" class="collapse">
-          <iframe src="{{urls[i]}}"></iframe>
-          </td>
+        <td colspan="6" style="padding: 0px 0px !important; background-color: #DDD;">
+        <div id="accordion{{i}}" class="collapse">
+          <iframe src="{{urls[i]}}" width="100%"  height="500"></iframe>
         </td>
       </tr>
     	{% endfor %}
