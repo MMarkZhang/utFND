@@ -90,8 +90,7 @@ TODO:
     </thead>
     <tbody>
       	{% for i  in range(0,n) %}
-
-    	<tr class="accordion-toggle" data-toggle="collapse" data-target="#accordion" class="clickable">
+    	<tr>
     		<td>
           <a href="/source_page/?source={{sources[i]}}">{{ sources[i] }}</a>
         </td>
@@ -129,13 +128,6 @@ TODO:
 
             </td>
     	</tr>
-       <tr>
-        <td colspan="5">
-        <div id="accordion" class="collapse">
-          <iframe src="{{urls[i]}}"></iframe>
-          </td>
-        </td>
-      </tr>
     	{% endfor %}
     </tbody>
   </table>
