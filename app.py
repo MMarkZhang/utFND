@@ -78,7 +78,7 @@ def results():
 @app.route('/source_page/')
 def source_page():
     s = request.args['source']
-    n = 6 #This will hange to reflect how many articles we have for this source
+    n = 6 #This will change to reflect how many articles we have for this source
 
     """At the moment, I am creating placeholder lists below.
     The plan is to populate these lists with the actual information.

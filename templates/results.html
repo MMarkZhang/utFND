@@ -35,6 +35,12 @@
   .affix + .container {
       padding-top: 70px;
   }
+
+  /*This is just placeholder CSS. Ideally, the active button should look better than this.
+  This is just version 1.0 of how an active button would be different from other buttons*/
+  .btn-active {
+    background-color: yellow;
+  }
   </style>
 
 
@@ -55,9 +61,7 @@
 
 <!-- The below code is creating popover windows on the predicted correctness bar.
 TODO:
-1. change the color. Currently, the text in the popovers is black.
-
-2. Right now, its only displaying hello. Need to obtain the appropriate number to display
+1. Right now, its only displaying hello. Need to obtain the appropriate number to display
 -->
 
 <nav class="navbar navbar-inverse" data-spy="affix" data-offset-top="350">
@@ -82,15 +86,16 @@ TODO:
     <thead>
       <tr>
         <th class="col-md-1" style="color: #BF5700">Source <a href="#" title="Source" data-toggle="popover" data-trigger="focus hover" data-content="The website that publishes the article"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
-        <th class="col-md-1" style="color: #BF5700">Predicted Reputation <a href="#" title="Predicted Reputation" data-toggle="popover" data-trigger="focus hover" data-content="We predict how often articles published by a source is reliable (click to sort)"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
-        <th class="col-md-1" style="color: #BF5700">Change reputation</th>
+        <th class="col-md-1" style="color: #BF5700">Predicted Reputation <a href="#" title="Predicted Reputation" data-toggle="popover" data-trigger="focus hover" data-content="We predict how often articles published by a source is reliable (click to sort). Adjust sliders to change reputation"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
+        <th class="col-md-1" style="color: #BF5700">Change reputation <a href="#" title="Change Reputation" data-toggle="popover" data-trigger="focus hover" data-content="Click button to revert a source's reputation to its originally calculated value"><i class="glyphicon glyphicon-question-sign"></i></a></th>
         <th class="col-md-3" style="color: #BF5700">Headline</th>
         <th class="col-md-1" style="color: #BF5700">Predicted Stance <a href="#" title="Predicted Stance" data-toggle="popover" data-trigger="focus hover" data-content="We predict whether an article is for, against or neutral with respect to the claim (click to sort by for)"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
       </tr>
     </thead>
     <tbody>
       	{% for i  in range(0,n) %}
-    	<tr>
+
+    	<tr class="accordion-toggle" data-toggle="collapse" data-target="#accordion" class="clickable">
     		<td>
           <a href="/source_page/?source={{sources[i]}}">{{ sources[i] }}</a>
         </td>
@@ -98,15 +103,6 @@ TODO:
 
             <div style="display:none;" id="textrep{{i}}">{{rep[i]}}</div>
             <input type="range" min="1" max="100" value="{{rep[i]}}" class="slider" id="sliderep{{i}}">
-
-
-
-
-
-
-
-
-
         </td>
         <td>
           <button type="button" id="sourcerep{{i}}" class="btn">Revert to default rep</button>
@@ -128,6 +124,13 @@ TODO:
 
             </td>
     	</tr>
+       <tr>
+        <td colspan="5">
+        <div id="accordion" class="collapse">
+          <iframe src="{{urls[i]}}"></iframe>
+          </td>
+        </td>
+      </tr>
     	{% endfor %}
     </tbody>
   </table>
@@ -135,6 +138,10 @@ TODO:
 
 <br>
 <br>
+<!--
+This is the button which will return all source reputations to their default reputations
+-->
+<button type="button" id="revertallbutton" class="btn">Revert all source reputations to default</button>
 
 <form action="/#">
     <div class="buttons">
@@ -174,10 +181,31 @@ var default_reps = {{rep}};
 for (let i=0; i < {{n}}; i++) {
   $("#sourcerep"+i).on('click', function(event) {
     document.getElementById("sliderep"+i).value = default_reps[i];
+    document.getElementById("sourcerep"+i).className = "btn";
     recalculate_veracity();
-
   });
 }
+
+/*This code captures clicks on the reputation sliders.
+After user clicks on a slider, changing the reputation from the default value to another value,
+I want the corresponding "Revert to default rep" button to become active and change its CSS.
+While the reputation is default, I want the button to have some other formatting.
+This way, the user knows which sources have non-default reputations at that moment
+*/
+for (let i=0; i < {{n}}; i++) {
+  $("#sliderep"+i).on('click', function(event) {
+    document.getElementById("sourcerep"+i).className = "btn-active";
+  });
+}
+
+//the button which reverts all source reputations to the default. Works
+//TODO: alignment and CSS
+$("#revertallbutton").on('click', function(event) {
+  for (let i=0; i < {{n}}; i++) {
+    document.getElementById("sliderep"+i).value = default_reps[i];
+  }
+  recalculate_veracity();
+});
 
 function recalculate_veracity(){
   var stances = {{stances}}
@@ -214,6 +242,19 @@ var clf_vera_coef = {{clf_vera_coef}};
 var clf_vera_intc = {{clf_vera_intc}};
 
 var score_against, score_neutral, score_for;
+
+function pad(num, size) {
+    var s = "000000000" + num;
+    return s.substr(s.length-size);
+}
+
+// fix stance sort order
+for (i = 0; i < n; i++) {
+	ts = document.getElementById("textstance" + i);
+	ts.innerHTML = pad(parseInt(ts.innerHTML), 5);
+}
+
+
 
 
 function pad(num, size) {
