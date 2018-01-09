@@ -24,15 +24,7 @@ import requests
 import sys
 import pickle
 import pandas as pd
-
 import nltk
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('conll2002')
-nltk.download('wordnet')
-nltk.download('maxent_treebank_pos_tagger')
-nltk.download('hmm_treebank_pos_tagger')
-
 
 
 
