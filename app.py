@@ -9,6 +9,7 @@ import pickle
 import random
 import logging
 import server
+import pandas as pd
 
 import logging
 logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
@@ -78,24 +79,28 @@ def results():
 @app.route('/source_page/')
 def source_page():
     s = request.args['source']
-    n = 6 #This will change to reflect how many articles we have for this source
 
-    """At the moment, I am creating placeholder lists below.
-    The plan is to populate these lists with the actual information.
-    """
+    data_all = pd.read_csv('edata_all.csv')
+    rel_data = data_all[data_all.source==s]
+
+    n = rel_data.shape[0] #This is how many articles we have for this source
+
     claims = []
     articles = []
+    article_urls = []
     pred_stances = []
     pred_claim_veracities = []
 
     for i in range(n):
-        claims.append("Claim "+str(i)+" here")
-        articles.append("Article "+str(i)+" here")
-        pred_stances.append("Prediced Stance "+str(i)+" here")
+        claims = rel_data.claimHeadline.tolist()
+        articles = rel_data.articleHeadline.tolist()
+        article_urls = rel_data.url.tolist()
+        pred_stances.append("Predicted Stance "+str(i)+" here")
         pred_claim_veracities.append("Predicted Claim Veracity "+str(i)+" here")
 
     return render_template("source_page.html", num_rows = n, source = s, claims = claims, \
-            articles = articles, pred_stances = pred_stances, pred_claim_veracities = pred_claim_veracities)
+            articles = articles, article_urls = article_urls, pred_stances = pred_stances, 
+            pred_claim_veracities = pred_claim_veracities)
 
 @app.route('/survey/')
 def survey():

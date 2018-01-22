@@ -93,10 +93,10 @@ TODO:
       </tr>
     </thead>
     <tbody>
-      	{% for i  in range(0,n) %}
+        {% for i  in range(0,n) %}
 
-    	<tr class="accordion-toggle" data-toggle="collapse" data-target="#accordion" class="clickable">
-    		<td>
+      <tr class="accordion-toggle" data-toggle="collapse" data-target="#accordion" class="clickable">
+        <td>
           <a href="/source_page/?source={{sources[i]}}">{{ sources[i] }}</a>
         </td>
         <td>
@@ -105,9 +105,9 @@ TODO:
             <input type="range" min="1" max="100" value="{{rep[i]}}" class="slider" id="sliderep{{i}}">
         </td>
         <td>
-          <button type="button" id="sourcerep{{i}}" class="btn">Revert to default rep</button>
+          <button type="button" id="sourcerep{{i}}" class="btn">Revert to default</button>
         </td>
-    		<td>  <a href={{urls[i]}}> {{ headlines[i] }} </a> </td>
+        <td>  <a href={{urls[i]}}> {{ headlines[i] }} </a> </td>
             <td>
                 <div style="display:none;" id="textstance{{i}}">{{stances[i][2]}}</div>
                 <div class="progress">
@@ -123,7 +123,7 @@ TODO:
                 </div>
 
             </td>
-    	</tr>
+      </tr>
        <tr>
         <td colspan="5">
         <div id="accordion" class="collapse">
@@ -131,7 +131,7 @@ TODO:
           </td>
         </td>
       </tr>
-    	{% endfor %}
+      {% endfor %}
     </tbody>
   </table>
 
@@ -250,8 +250,8 @@ function pad(num, size) {
 
 // fix stance sort order
 for (i = 0; i < n; i++) {
-	ts = document.getElementById("textstance" + i);
-	ts.innerHTML = pad(parseInt(ts.innerHTML), 5);
+  ts = document.getElementById("textstance" + i);
+  ts.innerHTML = pad(parseInt(ts.innerHTML), 5);
 }
 
 
@@ -264,8 +264,8 @@ function pad(num, size) {
 
 // fix stance sort order
 for (i = 0; i < n; i++) {
-	ts = document.getElementById("textstance" + i);
-	ts.innerHTML = pad(parseInt(ts.innerHTML), 5);
+  ts = document.getElementById("textstance" + i);
+  ts.innerHTML = pad(parseInt(ts.innerHTML), 5);
 }
 
 

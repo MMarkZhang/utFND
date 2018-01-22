@@ -66,7 +66,7 @@
           <th class="col-md-1" style="color: #BF5700">Claim <a href="#" title="Claim"></a> </th>
           <th class="col-md-1" style="color: #BF5700">Article <a href="#" title="Article" data-toggle="popover" data-trigger="focus hover" data-content="The article on this claim which was published by this source"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
           <th class="col-md-1" style="color: #BF5700">Predicted Stance <a href="#" title="Predicted Stance" data-toggle="popover" data-trigger="focus hover" data-content="We predict whether an article is for, against or neutral with respect to the claim"><i class="glyphicon glyphicon-question-sign"></i></a></th>
-          <th class="col-md-1" style="color: #BF5700">Predicted Claim Veracity <a href="#" title="Predicted Claim Veracity" data-toggle="popover" data-trigger="focus hover" data-content="We predict whether this particular claim was true"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
+          <th class="col-md-1" style="color: #BF5700">Predicted Veracity of Claim <a href="#" title="Predicted Claim Veracity" data-toggle="popover" data-trigger="focus hover" data-content="This is our prediction on whether this claim is true or not"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
         </tr>
       </thead>
       <tbody>
@@ -76,14 +76,25 @@
             {{claims[i]}}
           </td>
           <td>
-            {{articles[i]}}
+            <a href="{{article_urls[i]}}">{{articles[i]}}</a>
           </td>
           <td>
             <!-- This should be a slider, similar to the source reputation slider on the results page -->
             {{pred_stances[i]}}
           </td>
           <td>
-            {{pred_claim_veracities[i]}}
+            <!--{{pred_claim_veracities[i]}}-->
+            <div class="veracity">
+                <div class="progress-bar progress-bar-danger" role="progressbar" style="width:30%">
+                        False
+                </div>
+                <div class="progress-bar progress-bar-warning" role="progressbar" style="width:30%">
+                        Unknown
+                </div>
+                <div class="progress-bar progress-bar-success" role="progressbar" style="width:40%">
+                        True
+                </div>
+            </div>
           </td>
         </tr>
         {% endfor %}
