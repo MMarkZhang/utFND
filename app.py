@@ -71,7 +71,10 @@ def results():
     urls   = [u for u  in res['urls']]
     n = len(sources)
 
-    return render_template("results.html", headlines=headlines, sources=sources, n=n,\
+    # return render_template("results.html", headlines=headlines, sources=sources, n=n,\
+    #     veracity=veracity, stances=stances, claim=claim, rep=rep, \
+    #     clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls)
+    return render_template("InterfaceAPrime.html", headlines=headlines, sources=sources, n=n,\
         veracity=veracity, stances=stances, claim=claim, rep=rep, \
         clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls)
 

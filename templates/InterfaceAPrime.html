@@ -53,7 +53,7 @@
 <a href="/about/"><i class="fa fa-info-circle" aria-hidden="true" style="color:#BF5700"></i>&nbsp;About</a>
 </nav>
 </header>
-<h1>Claim Checker</h1>
+<h1>Claim Checker This is Interface A Prime</h1>
 <h2 style="position: relative; color: #BF5700; text-align: center; margin-top: 50px; ">Claim: "{{claim}}"</h2>
 <p style="position: relative; color: #BF5700; text-align: center; margin-top: 50px; ">(Click or hover over <i class="glyphicon glyphicon-question-sign"></i> for help )</p>
 
@@ -74,7 +74,7 @@ TODO:
       <div id = "vera_unk" class="progress-bar progress-bar-warning" role="progressbar" style="color: #BF5700; width:0%">
           <p style="color: #ffffff" title = "Unknown" data-toggle="popover" data-trigger="focus hover" data-placement = "top" data-content="Hello">Unknown</p>
       </div>
-      <div id = "vera_true" class="progress-bar progress-bar-success" role="progressbar" style="color: #BF5700; width:0%">
+      <div id = "vera_true" class="progress-bar progress-bar-success" role="progressbar" style="color: #Bf5700; width:0%">
           <p style="color: #ffffff" title = "True" data-toggle="popover" data-trigger="focus hover" data-placement = "top" data-content="Hello">True</p>
       </div>
   </div>
@@ -85,44 +85,34 @@ TODO:
   <table class="table" style="margin-top: 50px" id="mytable">
     <thead>
       <tr>
-        <th class="col-md-1" style="color: #BF5700">Source <a href="#" title="Source" data-toggle="popover" data-trigger="focus hover" data-content="The website that publishes the article"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
-        <th class="col-md-1" style="color: #BF5700">Predicted Reputation <a href="#" title="Predicted Reputation" data-toggle="popover" data-trigger="focus hover" data-content="We predict how often articles published by a source is reliable (click to sort). Adjust sliders to change reputation"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
-        <th class="col-md-1" style="color: #BF5700">Change reputation <a href="#" title="Change Reputation" data-toggle="popover" data-trigger="focus hover" data-content="Click button to revert a source's reputation to its originally calculated value"><i class="glyphicon glyphicon-question-sign"></i></a></th>
-        <th class="col-md-3" style="color: #BF5700">Headline</th>
-        <th class="col-md-1" style="color: #BF5700">Predicted Stance <a href="#" title="Predicted Stance" data-toggle="popover" data-trigger="focus hover" data-content="We predict whether an article is for, against or neutral with respect to the claim (click to sort by for)"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
+        <th class="col-md-1" style="color: #BF5700; text-align: center">Source <a href="#" title="Source" data-toggle="popover" data-trigger="focus hover" data-content="The website that publishes the article"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
+        <th class="col-md-3" style="color: #BF5700; text-align: center">Headline</th>
       </tr>
     </thead>
     <tbody>
         {% for i  in range(0,n) %}
 
       <tr class="accordion-toggle" data-toggle="collapse" data-target="#accordion" class="clickable">
-        <td>
+        <td style="width:20%; text-align: center">
           <a href="/source_page/?source={{sources[i]}}">{{ sources[i] }}</a>
         </td>
-        <td>
-
-            <div style="display:none;" id="textrep{{i}}">{{rep[i]}}</div>
-            <input type="range" min="1" max="100" value="{{rep[i]}}" class="slider" id="sliderep{{i}}">
+        <td style="text-align: center">  
+          <a href={{urls[i]}}> {{ headlines[i] }} </a> 
         </td>
-        <td>
-          <button type="button" id="sourcerep{{i}}" class="btn">Revert to default</button>
-        </td>
-        <td>  <a href={{urls[i]}}> {{ headlines[i] }} </a> </td>
-            <td>
-                <div style="display:none;" id="textstance{{i}}">{{stances[i][2]}}</div>
-                <div class="progress">
-                    <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{{stances[i][0]}}%">
+        <!-- <td> -->
+          <!-- <div style="display:none;width: 0%" id="textstance{{i}}">{{stances[i][2]}}</div> -->
+<!--           <div class="progress">
+            <div class="progress-bar progress-bar-danger" role="progressbar" style="width:{{stances[i][0]}}%">
                         Against
-                    </div>
-                    <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{stances[i][1]}}%">
+            </div>
+            <div class="progress-bar progress-bar-warning" role="progressbar" style="width:{{stances[i][1]}}%">
                         Neutral
-                    </div>
-                    <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{stances[i][2]}}%">
+            </div>
+            <div class="progress-bar progress-bar-success" role="progressbar" style="width:{{stances[i][2]}}%">
                         For
-                    </div>
-                </div>
-
-            </td>
+            </div>
+          </div> -->
+        <!-- </td> -->
       </tr>
        <tr>
         <td colspan="5">
@@ -138,32 +128,17 @@ TODO:
 
 <br>
 <br>
-<!--
-This is the button which will return all source reputations to their default reputations
--->
-<button type="button" id="revertallbutton" class="btn">Revert all source reputations to default</button>
 
 <form action="/#">
     <div class="buttons">
         <button class="submitter">Check another claim</button>
     </div>
 </form>
-
-
-
 </div>
-
-<p>Value: <span id="demo"></span></p>
-
-
 
 <footer>
   <p>This tool is a research prototype and is provided without warranty.</p>
 </footer>
-
-
-
-
 
 <script>
 
@@ -176,61 +151,6 @@ $(document).ready(function(){
       }
     })
 });
-
-var default_reps = {{rep}};
-for (let i=0; i < {{n}}; i++) {
-  $("#sourcerep"+i).on('click', function(event) {
-    document.getElementById("sliderep"+i).value = default_reps[i];
-    document.getElementById("sourcerep"+i).className = "btn";
-    recalculate_veracity();
-  });
-}
-
-/*This code captures clicks on the reputation sliders.
-After user clicks on a slider, changing the reputation from the default value to another value,
-I want the corresponding "Revert to default rep" button to become active and change its CSS.
-While the reputation is default, I want the button to have some other formatting.
-This way, the user knows which sources have non-default reputations at that moment
-*/
-for (let i=0; i < {{n}}; i++) {
-  $("#sliderep"+i).on('click', function(event) {
-    document.getElementById("sourcerep"+i).className = "btn-active";
-  });
-}
-
-//the button which reverts all source reputations to the default. Works
-//TODO: alignment and CSS
-$("#revertallbutton").on('click', function(event) {
-  for (let i=0; i < {{n}}; i++) {
-    document.getElementById("sliderep"+i).value = default_reps[i];
-  }
-  recalculate_veracity();
-});
-
-function recalculate_veracity(){
-  var stances = {{stances}}
-  var rep = {{rep}}
-  var n = {{n}};
-  var output = document.getElementById("demo");
-  var score_against, score_neutral, score_for;
-  score_against = 0;
-  score_neutral = 0;
-  score_for = 0;
-  for (i = 0; i < n; i++){
-    score_against += rep[i] * stances[i][0];
-    score_neutral += rep[i] * stances[i][1];
-    score_for     += rep[i] * stances[i][2];
-  }
-
-  s = score_for + score_neutral + score_against;
-  score_against = 100 * score_against / s;
-  score_neutral = 100 * score_neutral / s;
-  score_for     = 100 * score_for / s;
-  console.log(score_against, score_neutral, score_for);
-  document.getElementById("vera_false").style = "color: #BF5700; width:" + score_against + "%";
-  document.getElementById("vera_unk").style = "color: #BF5700; width:" + score_neutral + "%";
-  document.getElementById("vera_true").style = "color: #BF5700; width:" + score_for + "%";
-}
 
 var stances = {{stances}}
 var rep = {{rep}}
@@ -249,10 +169,10 @@ function pad(num, size) {
 }
 
 // fix stance sort order
-for (i = 0; i < n; i++) {
-  ts = document.getElementById("textstance" + i);
-  ts.innerHTML = pad(parseInt(ts.innerHTML), 5);
-}
+// for (i = 0; i < n; i++) {
+//   ts = document.getElementById("textstance" + i);
+//   ts.innerHTML = pad(parseInt(ts.innerHTML), 5);
+// }
 
 
 
@@ -263,10 +183,10 @@ function pad(num, size) {
 }
 
 // fix stance sort order
-for (i = 0; i < n; i++) {
-  ts = document.getElementById("textstance" + i);
-  ts.innerHTML = pad(parseInt(ts.innerHTML), 5);
-}
+// for (i = 0; i < n; i++) {
+//   ts = document.getElementById("textstance" + i);
+//   ts.innerHTML = pad(parseInt(ts.innerHTML), 5);
+// }
 
 
 function eval_vera(){
