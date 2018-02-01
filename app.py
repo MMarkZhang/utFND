@@ -65,6 +65,8 @@ def results():
     headlines = [a['headlines'] for a in res['articles']]
     sources = [a['sources'] for a in res['articles']]
     stances = [ [s*100 for s in a['stance'] ] for a in res['articles']]
+    #stances = [ s[2] - s[0] for s in stances]
+    #print stances
     veracity = [v*100 for v in res['veracity']]
     rep   = [100*a['reputation'] for a  in res['articles']]
     urls   = [u for u  in res['urls']]
