@@ -69,13 +69,13 @@ TODO:
   <br>
   <div class="progress" id="progress">
       <div id = "vera_false" class="progress-bar progress-bar-danger" role="progressbar" style="color: #BF5700; width:0%">
-        <p style="color: #ffffff" title="False" data-toggle="popover" data-trigger="focus hover" data-placement = "top" data-content="Hello">False</p>
+        <p id="bar_false" style="color: #ffffff" title="False" data-toggle="popover" data-trigger="focus hover" data-placement = "top" data-content="Hello">False</p>
       </div>
       <div id = "vera_unk" class="progress-bar progress-bar-warning" role="progressbar" style="color: #BF5700; width:0%">
           <p style="color: #ffffff" title = "Unknown" data-toggle="popover" data-trigger="focus hover" data-placement = "top" data-content="Hello">Unknown</p>
       </div>
       <div id = "vera_true" class="progress-bar progress-bar-success" role="progressbar" style="color: #Bf5700; width:0%">
-          <p style="color: #ffffff" title = "True" data-toggle="popover" data-trigger="focus hover" data-placement = "top" data-content="Hello">True</p>
+          <p id="bar_true" style="color: #ffffff" title = "True" data-toggle="popover" data-trigger="focus hover" data-placement = "top" data-content="Hello">True</p>
       </div>
   </div>
 </nav>
@@ -205,9 +205,10 @@ function eval_vera(){
   score_neutral = 100 * score_neutral / s;
   score_for     = 100 * score_for / s;
   console.log(score_against, score_neutral, score_for);
-  document.getElementById("vera_false").style = "color: #BF5700; width:" + score_against + "%";
-  document.getElementById("vera_unk").style = "color: #BF5700; width:" + score_neutral + "%";
-  document.getElementById("vera_true").style = "color: #BF5700; width:" + score_for + "%";
+  document.getElementById("vera_false").style = "color: #BF5700; width:" + ((score_against*100) / (score_for + score_against)) + "%";
+  document.getElementById("vera_unk").style = "color: #BF5700; width:" + 0 + "%";
+  document.getElementById("vera_true").style = "color: #BF5700; width:" + ((score_for*100) / (score_for + score_against)) + "%";
+
 
 }
 
@@ -215,7 +216,9 @@ eval_vera();
 slider = new Array(n);
 textreps = new Array(n);
 
-
+/*The below code changes the popover text on the correctness bar to reflect actual values of true and false*/
+$("#bar_true").attr('data-content', ((score_for*100) / (score_for + score_against)).toFixed(2) + "%");
+$("#bar_false").attr('data-content', ((score_against*100) / (score_for + score_against)).toFixed(2) + "%");
 
 
 for (i = 0; i < n; i++) {
