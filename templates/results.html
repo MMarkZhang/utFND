@@ -171,7 +171,7 @@ for (let i=0; i < {{n}}; i++) {
 }
 
 function recalculate_veracity(){
-  var stances = {{stances}}
+  /*var stances = {{stances}}
   var rep = {{rep}}
   var n = {{n}};
   //var output = document.getElementById("demo");
@@ -193,8 +193,12 @@ function recalculate_veracity(){
   document.getElementById("vera_false").style = "color: #BF5700; width:" + score_against + "%";
   document.getElementById("vera_unk").style = "color: #BF5700; width:" + score_neutral + "%";
   document.getElementById("vera_true").style = "color: #BF5700; width:" + score_for + "%";
+  */
+  eval_vera();
 }
 
+
+// get result variables
 var stances = {{stances}}
 var rep = {{rep}}
 //var cur_rep = {{rep}}
@@ -225,19 +229,22 @@ for (i = 0; i < n; i++) {
 
 function eval_vera(){
 
-  score_against = 0;
-  score_neutral = 0;
-  score_for = 0;
+  score_against = clf_vera_intc[0];
+  score_neutral = clf_vera_intc[1];
+  score_for = clf_vera_intc[2];
+  console.log(score_against, score_neutral, score_for);
   for (i = 0; i < n; i++){
-    score_against += rep[i] * stances[i][0];
-    score_neutral += rep[i] * stances[i][1];
-    score_for     += rep[i] * stances[i][2];
+    score_against += rep[i]/100.0 * clf_vera_coef[i][0] * (stances[i][2] -stances[i][0])/100.0;
+    score_neutral += rep[i]/100.0 * clf_vera_coef[i][1] * (stances[i][2] -stances[i][0])/100.0;
+    score_for     += rep[i]/100.0 * clf_vera_coef[i][2] * (stances[i][2] -stances[i][0])/100.0;
   }
 
-  s = score_for + score_neutral + score_against;
-  score_against = 100 * score_against / s;
-  score_neutral = 100 * score_neutral / s;
-  score_for     = 100 * score_for / s;
+  console.log(score_against, score_neutral, score_for);
+
+  s = Math.exp(score_for) + Math.exp(score_neutral) + Math.exp(score_against);
+  score_against = 100 * Math.exp(score_against) / s;
+  score_neutral = 100 * Math.exp(score_neutral) / s;
+  score_for     = 100 * Math.exp(score_for) / s;
   console.log(score_against, score_neutral, score_for);
   document.getElementById("vera_false").style = "color: #BF5700; width:" + score_against + "%";
   document.getElementById("vera_unk").style = "color: #BF5700; width:" + score_neutral + "%";
