@@ -201,7 +201,7 @@ def get_coef(dic_s, sources, clf):
     res = []
     for so in sources:
         if so not in dic_s:
-            res.append(0)
+            res.append([0, 0, 0])
             continue
         sid = dic_s[so] - 1 # 1-index to 0-index
         coef = clf.coef_[:, sid]
