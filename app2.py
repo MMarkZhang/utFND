@@ -140,7 +140,10 @@ def process_g(g, claim):
 
     for i in g['items']:
         source = i['displayLink']
-        headline = i['title']
+        try:
+            headline = i['pagemap']['newsarticle'][0]['headline']
+        except:
+            headline = i['title']
         #res.append((source, headline))
         sources.append(source)
         headlines.append(headline)
@@ -201,7 +204,7 @@ def get_coef(dic_s, sources, clf):
     res = []
     for so in sources:
         if so not in dic_s:
-            res.append([0, 0, 0])
+            res.append([-0.1, 0, 0.1])
             continue
         sid = dic_s[so] - 1 # 1-index to 0-index
         coef = clf.coef_[:, sid]
