@@ -90,11 +90,6 @@ The below code is creating popover windows on the predicted correctness bar.
         <th class="col-md-1" style="color: #BF5700">Change reputation <a href="#" title="Change Reputation" data-toggle="popover" data-trigger="focus hover" data-content="Click button to revert a source's reputation to its originally calculated value"><i class="glyphicon glyphicon-question-sign"></i></a></th>
         <th class="col-md-3" style="color: #BF5700">Headline</th>
         <th class="col-md-1" style="color: #BF5700">Predicted Stance <a href="#" title="Predicted Stance" data-toggle="popover" data-trigger="focus hover" data-content="We predict whether an article is for, against or neutral with respect to the claim (click to sort by for)"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
-<!--         <th class="col-md-1">
-          <button type="button" class="close" aria-label="Close">
-            <span aria-hidden='true'>&times;</span>
-          </button>
-        </th> -->
       </tr>
     </thead>
     <tbody>
@@ -155,12 +150,19 @@ This is the button which will return all source reputations to their default rep
 </form>
 
 
+
 </div>
+
+<p>Value: <span id="demo"></span></p>
+
 
 
 <footer>
   <p>This tool is a research prototype and is provided without warranty.</p>
 </footer>
+
+
+
 
 
 <script>
@@ -193,9 +195,6 @@ This way, the user knows which sources have non-default reputations at that mome
 for (let i=0; i < {{n}}; i++) {
   $("#sliderep"+i).on('click', function(event) {
     document.getElementById("sourcerep"+i).className = "btn-active";
-    alert("Hello")
-    print("\n\n\nHello\n\n\n");
-    recalculate_veracity();
   });
 }
 
@@ -228,9 +227,10 @@ function recalculate_veracity(){
   score_neutral = 100 * score_neutral / s;
   score_for     = 100 * score_for / s;
   console.log(score_against, score_neutral, score_for);
-  document.getElementById("vera_false").style = "color: #BF5700; width:" + score_against + "%";
-  document.getElementById("vera_unk").style = "color: #BF5700; width:" + score_neutral + "%";
-  document.getElementById("vera_true").style = "color: #BF5700; width:" + score_for + "%";
+  document.getElementById("vera_false").style = "color: #BF5700; width:" + ((score_against*100) / (score_for + score_against)) + "%";
+  document.getElementById("vera_unk").style = "color: #BF5700; width:" + 0 + "%";
+  document.getElementById("vera_true").style = "color: #BF5700; width:" + ((score_for*100) / (score_for + score_against)) + "%";
+
   document.getElementById("confidence").innerHTML = "Confidence Level: " + (100-score_neutral).toFixed(0) + "%";
 }
 
@@ -287,9 +287,9 @@ function eval_vera(){
   score_neutral = 100 * score_neutral / s;
   score_for     = 100 * score_for / s;
   console.log(score_against, score_neutral, score_for);
-  document.getElementById("vera_false").style = "color: #BF5700; width:" + score_against + "%";
-  document.getElementById("vera_unk").style = "color: #BF5700; width:" + score_neutral + "%";
-  document.getElementById("vera_true").style = "color: #BF5700; width:" + score_for + "%";
+  document.getElementById("vera_false").style = "color: #BF5700; width:" + ((score_against*100) / (score_for + score_against)) + "%";
+  document.getElementById("vera_unk").style = "color: #BF5700; width:" + 0 + "%";
+  document.getElementById("vera_true").style = "color: #BF5700; width:" + ((score_for*100) / (score_for + score_against)) + "%";
 
   document.getElementById("confidence").innerHTML = "Confidence Level: " + (100-score_neutral).toFixed(0) + "%"
 
