@@ -81,29 +81,29 @@ def results():
 
 @app.route('/source_page/')
 def source_page():
-    s = request.args['source']
+    source = request.args['source']
 
     data_all = pd.read_csv('edata_all.csv')
-    rel_data = data_all[data_all.source==s]
+    rel_data = data_all[data_all.source==source]
 
     n = rel_data.shape[0] #This is how many articles we have for this source
 
     claims = []
     articles = []
     article_urls = []
-    pred_stances = []
-    pred_claim_veracities = []
+    stances = []
+    claim_veracities = []
 
     for i in range(n):
         claims = rel_data.claimHeadline.tolist()
         articles = rel_data.articleHeadline.tolist()
         article_urls = rel_data.url.tolist()
-        pred_stances.append("Predicted Stance "+str(i)+" here")
-        pred_claim_veracities.append("Predicted Claim Veracity "+str(i)+" here")
+        stances = rel_data.articleHeadlineStance.tolist()
+        claim_veracities = rel_data.claimTruth.tolist()
 
-    return render_template("source_page.html", num_rows = n, source = s, claims = claims, \
-            articles = articles, article_urls = article_urls, pred_stances = pred_stances, 
-            pred_claim_veracities = pred_claim_veracities)
+    return render_template("source_page.html", num_rows = n, source = source, claims = claims, \
+            articles = articles, article_urls = article_urls, stances = stances, 
+            claim_veracities = claim_veracities)
 
 @app.route('/survey/')
 def survey():
