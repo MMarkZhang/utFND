@@ -28,7 +28,6 @@
   .affix {
       top: 0;
       width: 100%;
-      /*width: 100%;*/
       z-index: 9999;
   }
 
@@ -41,24 +40,11 @@
 </head>
 <body>
 
-<header>
-<nav>
-<a href="/#"><i class="fa fa-home" aria-hidden="true" style="color:#BF5700"></i>&nbsp;Home</a>
-<a href="/about/"><i class="fa fa-info-circle" aria-hidden="true" style="color:#BF5700"></i>&nbsp;About</a>
-</nav>
-</header>
-<h1>Claim Checker</h1>
+
 <h2 style="position: relative; color: #BF5700; text-align: center; margin-top: 50px; ">Claim: "{{claim}}"</h2>
 <p style="position: relative; color: #BF5700; text-align: center; margin-top: 50px; ">(Click or hover over <i class="glyphicon glyphicon-question-sign"></i> for help )</p>
 
 
-
-<!-- The below code is creating popover windows on the predicted correctness bar.
-TODO:
-1. change the color. Currently, the text in the popovers is black.
-
-2. Right now, its only displaying hello. Need to obtain the appropriate number to display
--->
 <div class="container" data-spy="affix" data-offset-top="350" id="vera">
 
 <div style="background-color: white;border-style: solid">
@@ -119,9 +105,73 @@ TODO:
 <br>
 <br>
 
-<form action="/#">
+
+<form id="form_predict">
+<h2 style="color: #BF5700; text-align: center;"> Your prediction:</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+
+        </div>
+        <div class="col-sm-4">
+            <center>
+                <form action="">
+                  <input type="radio" name="pred" value="false" onclick="click_false()" id="radio_false"> <label for="radio_false">False</label>      &nbsp &nbsp &nbsp &nbsp &nbsp
+                  <input type="radio" name="pred" value="true" onclick="click_true()" id="radio_true"> <label for="radio_true">True</label><br>
+                </form>
+            </center>
+        </div>
+        <div class="col-sm-4">
+
+        </div>
+    </div>
+</div>
+</form>
+
+<form id="form_confidence">
+<h2 style="color: #BF5700; text-align: center;"> Your confidence:</h2>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+
+        </div>
+        <div class="col-sm-4">
+            <center>
+                    <input type="range" min="0" max="100" step="5" value="50" name="confidence" id="confidence">
+            </center>
+        </div>
+        <div class="col-sm-4">
+
+        </div>
+    </div>
+</div>
+
+<br>
+<br>
+
+</form>
+
+<p style="color: #BF5700; text-align: center; display:none" id="info_point" >
+    Your prediction is <span id="predict_val"> </span> with <span id="confidence_val">50</span>% confidence. <br>
+    If the true label is <span id=lab1> False</span>, you will get <span id=point1> 1</span> points.<br>
+    If the true label is <span id=lab2> True</span>, you will lose <span id=point2> 1</span> points. </span>
+</p>
+
+<form>
     <div class="buttons">
-        <button class="submitter">Check another claim</button>
+        <button class="submitter" disabled="true" id ="submit">Submit</button>
+    </div>
+</form>
+
+<p style="color: #BF5700; text-align: center;" id="pred_res"> </p>
+<br>
+
+<form method="post" action="{{ url_for('task') }}">
+    <input style="display:none" name="claim_idx" id="claim_idx" value={{next_claim_idx}}>
+    <div style="display:none;" id="button_next">
+        <div class="buttons">
+            <button class="submitter">Next</button>
+        </div>
     </div>
 </form>
 
@@ -134,15 +184,82 @@ TODO:
 
 
 
-<footer>
-  <p>This tool is a research prototype and is provided without warranty.</p>
-</footer>
-
-
 
 
 
 <script>
+
+var p00=20, p01=20, p10=20, p11=20;
+var confidence_slider = document.getElementById("confidence");
+confidence_slider.oninput = function (){
+    document.getElementById("confidence_val").innerHTML = this.value;
+    update_point();
+}
+
+function update_point(){
+    if (get_pred()) {p_get = p00; p_lose=p10;}
+    else {p_get = p11; p_lose=p01;}
+    document.getElementById("point1").innerHTML = p_get * confidence_slider.value / 100;
+    document.getElementById("point2").innerHTML = p_lose * confidence_slider.value / 100;
+}
+
+
+function click_false(){
+    console.log("click false");
+    document.querySelector("#submit").disabled = false;
+    document.getElementById("info_point").style.display="block";
+    document.getElementById("predict_val").innerHTML = "False";
+    document.getElementById("lab1").innerHTML = "False";
+    document.getElementById("lab2").innerHTML = "True";
+    update_point();
+}
+
+function click_true(){
+    document.querySelector("#submit").disabled = false;
+    document.getElementById("info_point").style.display="block";
+    document.getElementById("predict_val").innerHTML = "True";
+    document.getElementById("lab1").innerHTML = "True";
+    document.getElementById("lab2").innerHTML = "False";
+    document.getElementById("point1").innerHTML = "10";
+    document.getElementById("point2").innerHTML = "10";
+    update_point();
+}
+
+
+
+var gold_vera = {{gold_vera}};
+
+var form_predict = document.querySelector("#form_predict");
+var form_confidence = document.querySelector("#form_confidence");
+var pred_res = document.querySelector("#pred_res");
+var submit = document.querySelector("#submit");
+
+function get_pred(){
+    if (form_predict.elements[0].checked) return false;
+    else if (form_predict.elements[1].checked) return true;
+}
+
+submit.addEventListener("click", function(event) {
+  var predict_val = get_pred();
+
+  var confidence_val = form_confidence.elements[0].value;
+  var output = "The correct answer is " + gold_vera + ".\n";
+  console.log(output);
+  pred_res.innerText = output;
+
+  event.preventDefault();
+
+  //activate "next"
+  var next = document.getElementById("button_next");
+  next.style.display = "block";
+
+  //disable form and submit
+  this.disabled = true;
+  form_predict.elements[0].disabled = true;
+  form_predict.elements[1].disabled = true;
+  form_confidence.elements[0].disabled =  true;
+
+}, false);
 
 /*
 $('#vera')

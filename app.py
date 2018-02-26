@@ -78,6 +78,37 @@ def results():
         clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls)
 
 
+@app.route('/task/', methods=['GET', 'POST'])
+def task():
+    task_claims = pickle.load(open('task_claims.pkl'))
+    try:
+        claim_idx=int(request.form['claim_idx'])
+    except:
+        claim_idx=0
+
+
+    claim, gold_vera = task_claims[claim_idx]
+    #print claim, gold_vera
+
+
+    res = server.api_call(claim, True)
+    headlines = [a['headlines'] for a in res['articles']]
+    sources = [a['sources'] for a in res['articles']]
+    stances = [ [s*100 for s in a['stance'] ] for a in res['articles']]
+    stances = [s[2] - s[0] for s in stances]
+    veracity = [v*100 for v in res['veracity']]
+    rep   = [100*a['reputation'] for a  in res['articles']]
+    urls   = [u for u  in res['urls']]
+    n = len(sources)
+
+    return render_template("task.html", headlines=headlines, sources=sources, n=n,\
+        veracity=veracity, stances=stances, claim=claim, rep=rep, \
+        clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls,\
+        next_claim_idx=str(claim_idx+1), gold_vera=gold_vera)
+
+
+
+
 @app.route('/source_page/')
 def source_page():
     s = request.args['source']
