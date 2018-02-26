@@ -1,7 +1,7 @@
 # We need to import request to access the details of the POST request
 # and render_template, to render our templates (form and response)
 # we'll use url_for to get some URLs for the app on the templates
-from flask import Flask, render_template, request, url_for
+from flask import Flask, render_template, request, url_for, session, escape
 import sys
 import util
 import json
@@ -9,6 +9,7 @@ import pickle
 import random
 import logging
 import server
+import  string
 
 import logging
 logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
@@ -26,6 +27,8 @@ logger.setLevel(logging.INFO)
 
 # Initialize the Flask application
 app = Flask(__name__)
+
+app.secret_key =  '\xb1\xecM|pz\x0f\xa5\x82\x90\x1a\xb9\xca2@V\x03WGS\xf2\xc3w\x88'
 
 # Define a route for the default URL, which loads the form
 @app.route('/') # First page
@@ -81,13 +84,17 @@ def results():
 @app.route('/task/', methods=['GET', 'POST'])
 def task():
     task_claims = pickle.load(open('task_claims.pkl'))
+    claim_idx = 0
+    point_change = 0
     try:
+        point_change=int(request.form['point_change'])
         claim_idx=int(request.form['claim_idx'])
     except:
-        claim_idx=0
+        pass
 
 
     claim, gold_vera = task_claims[claim_idx]
+    gold_vera = gold_vera.capitalize()
     #print claim, gold_vera
 
 
@@ -101,10 +108,24 @@ def task():
     urls   = [u for u  in res['urls']]
     n = len(sources)
 
+    if 'username' in session:
+        username = session['username']
+    else:
+        N = 10
+        session['username'] = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(N))
+        username = session['username']
+
+    users = pickle.load(open('users.pkl'))
+    if username not in users:
+        users[username] = 0
+    users[username] += point_change
+    pickle.dump(users, open('users.pkl', 'w'))
+    points = users[username]
+
     return render_template("task.html", headlines=headlines, sources=sources, n=n,\
         veracity=veracity, stances=stances, claim=claim, rep=rep, \
         clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls,\
-        next_claim_idx=str(claim_idx+1), gold_vera=gold_vera)
+        next_claim_idx=str(claim_idx+1), gold_vera=gold_vera, current_point=points)
 
 
 

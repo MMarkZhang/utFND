@@ -145,16 +145,15 @@
         </div>
     </div>
 </div>
-
-<br>
 <br>
 
 </form>
 
 <p style="color: #BF5700; text-align: center; display:none" id="info_point" >
     Your prediction is <span id="predict_val"> </span> with <span id="confidence_val">50</span>% confidence. <br>
-    If the true label is <span id=lab1> False</span>, you will get <span id=point1> 1</span> points.<br>
-    If the true label is <span id=lab2> True</span>, you will lose <span id=point2> 1</span> points. </span>
+    You currently have <span id="current_point"> 0</span> points. <br>
+    If the correct answer is <span id=lab1> False</span>, you will get <span id=point1> 1</span> points.<br>
+    If the correct answer is <span id=lab2> True</span>, you will lose <span id=point2> 1</span> points. </span>
 </p>
 
 <form>
@@ -164,10 +163,10 @@
 </form>
 
 <p style="color: #BF5700; text-align: center;" id="pred_res"> </p>
-<br>
 
 <form method="post" action="{{ url_for('task') }}">
     <input style="display:none" name="claim_idx" id="claim_idx" value={{next_claim_idx}}>
+    <input style="display:none" name="point_change" id="point_change" value="0">
     <div style="display:none;" id="button_next">
         <div class="buttons">
             <button class="submitter">Next</button>
@@ -199,8 +198,11 @@ confidence_slider.oninput = function (){
 function update_point(){
     if (get_pred()) {p_get = p00; p_lose=p10;}
     else {p_get = p11; p_lose=p01;}
-    document.getElementById("point1").innerHTML = p_get * confidence_slider.value / 100;
-    document.getElementById("point2").innerHTML = p_lose * confidence_slider.value / 100;
+    p_get =  p_get * confidence_slider.value / 100;
+    p_lose = p_lose * confidence_slider.value / 100;
+    document.getElementById("point1").innerHTML = p_get;
+    document.getElementById("point2").innerHTML = p_lose;
+    return [p_get, p_lose];
 }
 
 
@@ -225,9 +227,9 @@ function click_true(){
     update_point();
 }
 
-
-
-var gold_vera = {{gold_vera}};
+var current_point = {{current_point}};
+document.getElementById("current_point").innerHTML = current_point;
+var gold_vera = "{{gold_vera}}";
 
 var form_predict = document.querySelector("#form_predict");
 var form_confidence = document.querySelector("#form_confidence");
@@ -239,13 +241,12 @@ function get_pred(){
     else if (form_predict.elements[1].checked) return true;
 }
 
+// submit
 submit.addEventListener("click", function(event) {
   var predict_val = get_pred();
 
   var confidence_val = form_confidence.elements[0].value;
-  var output = "The correct answer is " + gold_vera + ".\n";
-  console.log(output);
-  pred_res.innerText = output;
+
 
   event.preventDefault();
 
@@ -258,6 +259,23 @@ submit.addEventListener("click", function(event) {
   form_predict.elements[0].disabled = true;
   form_predict.elements[1].disabled = true;
   form_confidence.elements[0].disabled =  true;
+
+  var output = "The correct answer is " + gold_vera + ".\n";
+
+  p = update_point();
+  if (gold_vera.toLowerCase() == predict_val.toString()){
+      document.getElementById("point_change").value = p[0]; // p_get
+      output += "You have won " + p[0] + " points.";
+  }
+  else{
+      document.getElementById("point_change").value = -p[1]; // p_lose
+      output += "You have lost " + p[1] + " points.";
+  }
+
+
+    console.log(output);
+    pred_res.innerText = output;
+
 
 }, false);
 
