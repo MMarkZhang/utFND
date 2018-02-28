@@ -137,51 +137,12 @@ h2 {
   display: block;
   padding: 12px 10px 12px 10px;
 }
-.navbar-wrapper {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 100% !important;
-    left: 0;
-    z-index: 20;
-}
-
-/* Flip around the padding for proper display in narrow viewports */
-.navbar-wrapper > .container {
-    padding-right: 0;
-    padding-left: 0;
-    width: inherit;
-}
-
-.navbar-wrapper .navbar {
-    width: 100% !important;
-}
-
-.navbar-inverse {
-  width: 100% !important;
-    background-color: rgba(0, 0, 0, 0.5) !important;
-  border-radius: 0;
-}
-
-.navbar-inverse .nav > li > a {
-    color: #FFFFFF;
-}
-
-.navbar-inverse .nav > li > a:hover {
-    background: none;
-}
-
-.navbar-brand a {
-    color: #FFFFFF;
-}
-
 /* Form Styles
 form label{
     display: block;
     margin-bottom: 5px;
 }
 */
-
 form input[type=text]{
     border: 2px solid #aaa;
     border-radius: 2px;

@@ -7,8 +7,11 @@ temp_res_g = pickle.load(open('temp_resg.pkl'))
 
 import json
 
-def api_call(claim):
-    res_g = app2.query_g(claim)
+def api_call(claim, use_cache=False):
+    """
+    use_cache: arg for query_g
+    """
+    res_g = app2.query_g(claim, use_cache)
     (sources, df, vera, stances, rep, clf_vera_coef, clf_vera_intc, urls) = app2.answer(claim, res_g, True)
     articles = []
     n = len(sources)

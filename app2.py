@@ -105,6 +105,7 @@ def web_search_title(claim):
 def query_g(claim, use_cache=False):
     """
     get search results (from google)
+    use_cache: if the claim is in the train data, skip google search
     """
     list_claim = pickle.load(open('list_claim.pkl'))
     if use_cache and claim in list_claim:
@@ -113,7 +114,8 @@ def query_g(claim, use_cache=False):
         rel_data = data_all[ data_all.claimHeadline == claim]
         sources = rel_data.source.tolist()
         titles = rel_data.articleHeadline.tolist()
-        res = {'items': [{'displayLink': s, 'title': t} for s, t in zip(sources, titles)]}
+        links = rel_data.url.tolist()
+        res = {'items': [{'displayLink': s, 'title': t, 'link': l} for s, t, l in zip(sources, titles, links)]}
         return res
 
     try:
@@ -140,7 +142,10 @@ def process_g(g, claim):
 
     for i in g['items']:
         source = i['displayLink']
-        headline = i['title']
+        try:
+            headline = i['pagemap']['newsarticle'][0]['headline']
+        except:
+            headline = i['title']
         #res.append((source, headline))
         sources.append(source)
         headlines.append(headline)
@@ -201,7 +206,7 @@ def get_coef(dic_s, sources, clf):
     res = []
     for so in sources:
         if so not in dic_s:
-            res.append(0)
+            res.append([-0.1, 0, 0.1])
             continue
         sid = dic_s[so] - 1 # 1-index to 0-index
         coef = clf.coef_[:, sid]
