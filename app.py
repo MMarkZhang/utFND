@@ -69,7 +69,7 @@ def results():
     #res_str = json.dumps(res, indent=4, sort_keys=True)
     headlines = [a['headlines'] for a in res['articles']]
     sources = [a['sources'] for a in res['articles']]
-    stances = [ [s*100 for s in a['stance'] ] for a in res['articles']]
+    stances = [ [s for s in a['stance'] ] for a in res['articles']]
     stances = [ np.argmax(s) - 1  for s in stances] # stance = -1, 0, 1
     #stances = [ s[2] - s[0] for s in stances]
     #print stances
@@ -100,12 +100,15 @@ def task():
 
 
     res = server.api_call(claim, True)
+    #res_str = json.dumps(res, indent=4, sort_keys=True)
     headlines = [a['headlines'] for a in res['articles']]
     sources = [a['sources'] for a in res['articles']]
-    stances = [ [s*100 for s in a['stance'] ] for a in res['articles']]
-    stances = [s[2] - s[0] for s in stances]
+    stances = [ [s for s in a['stance'] ] for a in res['articles']]
+    stances = [ np.argmax(s) - 1  for s in stances] # stance = -1, 0, 1
+    #stances = [ s[2] - s[0] for s in stances]
+    #print stances
     veracity = [v*100 for v in res['veracity']]
-    rep   = [100*a['reputation'] for a  in res['articles']]
+    rep   = [a['reputation'] for a  in res['articles']]
     urls   = [u for u  in res['urls']]
     n = len(sources)
 
@@ -125,7 +128,7 @@ def task():
 
     return render_template("task.html", headlines=headlines, sources=sources, n=n,\
         veracity=veracity, stances=stances, claim=claim, rep=rep, \
-        clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls,\
+        urls = urls,\
         next_claim_idx=str(claim_idx+1), gold_vera=gold_vera, current_point=points)
 
 
@@ -144,18 +147,21 @@ def ab():
     gold_vera = gold_vera.capitalize()
 
     res = server.api_call(claim, True)
+    #res_str = json.dumps(res, indent=4, sort_keys=True)
     headlines = [a['headlines'] for a in res['articles']]
     sources = [a['sources'] for a in res['articles']]
-    stances = [ [s*100 for s in a['stance'] ] for a in res['articles']]
-    stances = [s[2] - s[0] for s in stances]
+    stances = [ [s for s in a['stance'] ] for a in res['articles']]
+    stances = [ np.argmax(s) - 1  for s in stances] # stance = -1, 0, 1
+    #stances = [ s[2] - s[0] for s in stances]
+    #print stances
     veracity = [v*100 for v in res['veracity']]
-    rep   = [100*a['reputation'] for a  in res['articles']]
+    rep   = [a['reputation'] for a  in res['articles']]
     urls   = [u for u  in res['urls']]
     n = len(sources)
 
     return render_template("ab.html", headlines=headlines, sources=sources, n=n,\
         veracity=veracity, stances=stances, claim=claim, rep=rep, \
-        clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls,\
+        urls = urls,\
         gold_vera=gold_vera)
 
 
