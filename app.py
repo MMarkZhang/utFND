@@ -159,6 +159,11 @@ def ab():
     urls   = [u for u  in res['urls']]
     n = len(sources)
 
+    if claim_idx==27:
+        # attention check claim
+        #headlines[0] = 'If you read this headline please select neutral thank you'
+        headlines[7] = 'If you read this headline please select neutral thank you'
+
     return render_template("ab.html", headlines=headlines, sources=sources, n=n,\
         veracity=veracity, stances=stances, claim=claim, rep=rep, \
         urls = urls,\
