@@ -180,11 +180,11 @@ def get_features_ch(claim, headline):
     return xt
 
 def get_claim_f(dic_s, sources, stances, l = 724):
-    f = np.zeros((1, 724))
+    f = np.zeros((1, l))
     for so, st in zip(sources, stances):
         if so not in dic_s: continue
         sid = dic_s[so] - 1 # 1-index to 0-index
-        f[0, sid] = st - 1 # 0, 1, 2 to -1, 0, 1
+        f[0, sid] = st
 
     return f
 
@@ -198,7 +198,7 @@ def get_rep(dic_s, sources, clf):
         sid = dic_s[so] - 1 # 1-index to 0-index
         rep = sum(abs(clf.coef_[:, sid]))
         rep = 1 if rep > 1 else rep
-        rep = 0.01 if rep < 0.01 else rep
+        rep = -1 if rep < -1 else rep
         res.append(rep)
     return res
 
@@ -206,11 +206,11 @@ def get_coef(dic_s, sources, clf):
     res = []
     for so in sources:
         if so not in dic_s:
-            res.append([-0.1, 0, 0.1])
+            res.append(0)
             continue
         sid = dic_s[so] - 1 # 1-index to 0-index
-        coef = clf.coef_[:, sid]
-        res.append(coef.tolist())
+        coef = clf.coef_[0, sid]
+        res.append(coef)
     return res
 
 
@@ -220,7 +220,7 @@ def answer(claim, res_g, for_api = False):
     for_api: return results for api call
     """
     #(cmv, dic_s) = pickle.load(open('save_cmv_dics.pkl'))
-    (clf_vera, clf_stance, dic_s) = pickle.load(open('save_clf_dics.pkl'))
+    (clf_vera, clf_stance, dic_s) = pickle.load(open('save_clf.pkl'))
 
 
     (sources, df, urls) = process_g(res_g, claim)
