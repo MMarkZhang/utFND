@@ -36,6 +36,10 @@
       padding-top: 70px;
   }
 
+  .removeArticles {
+    cursor: pointer;
+  }
+
   /*This is just placeholder CSS. Ideally, the active button should look better than this.
   This is just version 1.0 of how an active button would be different from other buttons*/
   .btn-active {
@@ -90,6 +94,7 @@ The below code is creating popover windows on the predicted correctness bar.
         <th class="col-md-1" style="color: #BF5700">Change reputation <a href="#" title="Change Reputation" data-toggle="popover" data-trigger="focus hover" data-content="Click button to revert a source's reputation to its originally calculated value"><i class="glyphicon glyphicon-question-sign"></i></a></th>
         <th class="col-md-3" style="color: #BF5700">Headline</th>
         <th class="col-md-1" style="color: #BF5700">Predicted Stance <a href="#" title="Predicted Stance" data-toggle="popover" data-trigger="focus hover" data-content="We predict whether an article is for, against or neutral with respect to the claim (click to sort by for)"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
+        <th style="color: #BF5700">Remove article</th>
       </tr>
     </thead>
     <tbody>
@@ -123,6 +128,9 @@ The below code is creating popover windows on the predicted correctness bar.
                 </div>
 
             </td>
+      <td class = "removeArticles" id="remove{{i}}" style="text-align: center; font-size: 30px" width="2%">
+        &times;
+      </td>
       </tr>
        <tr>
         <td colspan="5">
@@ -152,9 +160,6 @@ This is the button which will return all source reputations to their default rep
 
 
 </div>
-
-<p>Value: <span id="demo"></span></p>
-
 
 
 <footer>

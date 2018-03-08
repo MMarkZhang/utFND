@@ -71,12 +71,12 @@ def results():
     urls   = [u for u  in res['urls']]
     n = len(sources)
 
-    return render_template("results.html", headlines=headlines, sources=sources, n=n,\
-        veracity=veracity, stances=stances, claim=claim, rep=rep, \
-        clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls)
-    # return render_template("InterfaceAPrime.html", headlines=headlines, sources=sources, n=n,\
+    # return render_template("results.html", headlines=headlines, sources=sources, n=n,\
     #     veracity=veracity, stances=stances, claim=claim, rep=rep, \
     #     clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls)
+    return render_template("InterfaceAPrime.html", headlines=headlines, sources=sources, n=n,\
+        veracity=veracity, stances=stances, claim=claim, rep=rep, \
+        clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls)
 
 
 @app.route('/source_page/')
@@ -104,6 +104,32 @@ def source_page():
     return render_template("source_page.html", num_rows = n, source = source, claims = claims, \
             articles = articles, article_urls = article_urls, stances = stances, 
             claim_veracities = claim_veracities)
+
+@app.route('/test/', methods=['POST'])
+def test():
+    claim = request.form['claim']
+    print ("Test page. Query string is")
+    print claim
+
+    # return render_template("test.html", QueryString = claim);
+
+    res = server.api_call(claim)
+    #res_str = json.dumps(res, indent=4, sort_keys=True)
+    headlines = [a['headlines'] for a in res['articles']]
+    sources = [a['sources'] for a in res['articles']]
+    stances = [ [s*100 for s in a['stance'] ] for a in res['articles']]
+    veracity = [v*100 for v in res['veracity']]
+    rep   = [100*a['reputation'] for a  in res['articles']]
+    urls   = [u for u  in res['urls']]
+    n = len(sources)
+
+    # return render_template("results.html", headlines=headlines, sources=sources, n=n,\
+    #     veracity=veracity, stances=stances, claim=claim, rep=rep, \
+    #     clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls)
+    return render_template("InterfaceAPrime.html", headlines=headlines, sources=sources, n=n,\
+        veracity=veracity, stances=stances, claim=claim, rep=rep, \
+        clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls)
+
 
 @app.route('/survey/')
 def survey():

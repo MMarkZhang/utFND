@@ -25,6 +25,9 @@
     .affix + .container {
         padding-top: 70px;
     }
+    .linksHandCursor {
+      cursor: pointer;
+    }
     </style>
 
 </head>
@@ -64,24 +67,27 @@
         <tr>
           <th class="col-md-1" style="color: #BF5700">Claim <a href="#" title="Claim"></a> </th>
           <th class="col-md-1" style="color: #BF5700">Article <a href="#" title="Article" data-toggle="popover" data-trigger="focus hover" data-content="The article on this claim which was published by this source"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
-          <th class="col-md-1" style="color: #BF5700">Article Stance on Claim<a href="#" title="Predicted Stance" data-toggle="popover" data-trigger="focus hover" data-content="We predict whether an article is for, against or neutral with respect to the claim"><i class="glyphicon glyphicon-question-sign"></i></a></th>
-          <th class="col-md-1" style="color: #BF5700">Veracity of Claim <a href="#" title="Predicted Claim Veracity" data-toggle="popover" data-trigger="focus hover" data-content="This is our prediction on whether this claim is true or not"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
+          <th style="color: #BF5700">Article Stance on Claim<a href="#" title="Predicted Stance" data-toggle="popover" data-trigger="focus hover" data-content="We predict whether an article is for, against or neutral with respect to the claim"><i class="glyphicon glyphicon-question-sign"></i></a></th>
+          <th style="color: #BF5700">Veracity of Claim <a href="#" title="Predicted Claim Veracity" data-toggle="popover" data-trigger="focus hover" data-content="This is our prediction on whether this claim is true or not"><i class="glyphicon glyphicon-question-sign"></i></a> </th>
         </tr>
       </thead>
       <tbody>
         {% for i  in range(0,num_rows) %} <!--num_rows is passed from app.py -->
         <tr>
           <td>
-            {{claims[i]}}
+            <form method="post" id="formFromSourcePage{{i}}" action="/test/">
+              <input type="hidden" name="claim" id="text{{i}}" value="{{claims[i]}}">
+            </form>
+            <a id="link{{i}}" class="linksHandCursor" onclick="newResults({{i}}, this)">{{claims[i]}}</a>
           </td>
           <td>
-            <a href="{{article_urls[i]}}">{{articles[i]}}</a>
+            <a href="{{article_urls[i]}}" target="_blank">{{articles[i]}}</a>
           </td>
-          <td>
+          <td width="2%">
             <!-- This should be a slider, similar to the source reputation slider on the results page -->
             {{stances[i]}}
           </td>
-          <td>
+          <td width="2%">
             {{claim_veracities[i]}}
 <!--             <div class="veracity">
                 <div class="progress-bar progress-bar-danger" role="progressbar" style="width:30%">
@@ -124,8 +130,12 @@
           return
         }
       })
+
   });
 
+  function newResults(val) {
+    document.getElementById("formFromSourcePage"+val).submit()
+  }
   </script>
 </body>
 </html>
