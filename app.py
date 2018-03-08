@@ -10,6 +10,8 @@ import random
 import logging
 import server
 import  string
+import numpy as np
+import pandas as pd
 
 import logging
 logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
@@ -68,17 +70,16 @@ def results():
     headlines = [a['headlines'] for a in res['articles']]
     sources = [a['sources'] for a in res['articles']]
     stances = [ [s*100 for s in a['stance'] ] for a in res['articles']]
-    stances = [s[2] - s[0] for s in stances]
+    stances = [ np.argmax(s) - 1  for s in stances] # stance = -1, 0, 1
     #stances = [ s[2] - s[0] for s in stances]
     #print stances
     veracity = [v*100 for v in res['veracity']]
-    rep   = [100*a['reputation'] for a  in res['articles']]
+    rep   = [a['reputation'] for a  in res['articles']]
     urls   = [u for u  in res['urls']]
     n = len(sources)
 
     return render_template("results.html", headlines=headlines, sources=sources, n=n,\
-        veracity=veracity, stances=stances, claim=claim, rep=rep, \
-        clf_vera_coef=res["clf_vera_coef"], clf_vera_intc=res["clf_vera_intc"].tolist(), urls = urls)
+        veracity=veracity, stances=stances, claim=claim, rep=rep, urls=urls)
 
 
 @app.route('/task/', methods=['GET', 'POST'])
@@ -160,25 +161,30 @@ def ab():
 
 @app.route('/source_page/')
 def source_page():
-    s = request.args['source']
-    n = 6 #This will hange to reflect how many articles we have for this source
+    source = request.args['source']
 
-    """At the moment, I am creating placeholder lists below.
-    The plan is to populate these lists with the actual information.
-    """
+    data_all = pd.read_csv('edata_all.csv')
+    rel_data = data_all[data_all.source==source]
+
+    n = rel_data.shape[0] #This is how many articles we have for this source
+
     claims = []
     articles = []
-    pred_stances = []
-    pred_claim_veracities = []
+    article_urls = []
+    stances = []
+    claim_veracities = []
 
     for i in range(n):
-        claims.append("Claim "+str(i)+" here")
-        articles.append("Article "+str(i)+" here")
-        pred_stances.append("Prediced Stance "+str(i)+" here")
-        pred_claim_veracities.append("Predicted Claim Veracity "+str(i)+" here")
+        claims = rel_data.claimHeadline.tolist()
+        articles = rel_data.articleHeadline.tolist()
+        article_urls = rel_data.url.tolist()
+        stances = rel_data.articleHeadlineStance.tolist()
+        claim_veracities = rel_data.claimTruth.tolist()
 
-    return render_template("source_page.html", num_rows = n, source = s, claims = claims, \
-            articles = articles, pred_stances = pred_stances, pred_claim_veracities = pred_claim_veracities)
+    return render_template("source_page.html", num_rows = n, source = source, claims = claims, \
+            articles = articles, article_urls = article_urls, stances = stances, 
+claim_veracities = claim_veracities)
+
 
 @app.route('/survey/')
 def survey():
