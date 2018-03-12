@@ -67,13 +67,20 @@ def process_data(input_data):
     data['interface'] = ['A' if x==x  else 'B' for x in data['Q1_1']]
     
     return data
+
+def get_loc(ip):
+    import pygeoip
+    GEOIP = pygeoip.GeoIP("GeoIP.dat", pygeoip.MEMORY_CACHE)
+    return GEOIP.country_name_by_addr(ip)
     
 
 def main():
     data = pd.read_csv('Research+Study_March+9%2C+2018_00.30.csv')
     d = process_data(data)
+    d['loc'] = [get_loc(ip) for ip in d['IPAddress']]
     print np.mean(d['mean error'][d.interface == 'A'])
     print np.mean(d['mean error'][d.interface == 'B'])
+    print d[['mean error', 'interface', 'Duration (in seconds)', 'loc']]
     
     
     
